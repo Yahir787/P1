@@ -45,13 +45,14 @@ class WebRequestHandler(BaseHTTPRequestHandler):
 
     def get_book_recomendation(self, session_id, book_id):
         r.rpush(session_id, book_id)
-        books = r.lrange(session_id, 0, 5)
-        print(session_id, books)
-        all_books = [str(i+1) for i in range(4)]
-        new = [b for b in all_books if b not in
-               [vb.decode() for vb in books]]
-        if new:
-            return new[0]
+        books = r.lrange(session_id, 0, -1)  # Obtén todos los libros visitados
+        if len(books) >= 2:
+            all_books = [str(i+1) for i in range(5)]  # Supongo que tienes 5 libros en total
+            visited_books = [vb.decode() for vb in books]
+            unvisited_books = [b for b in all_books if b not in visited_books]
+            if unvisited_books:
+                return unvisited_books[0]
+        return None  # No hay suficientes libros visitados para proporcionar una recomendación
 
     def get_book(self, book_id):
         session_id = self.get_book_session()
@@ -68,8 +69,10 @@ class WebRequestHandler(BaseHTTPRequestHandler):
         <p>  URL: {self.url}              </p>
         <p>  HEADERS: {self.headers}      </p>
         <p>  SESSION: {session_id}      </p>
-        <p>  Recomendación: {book_recomendation}      </p>
-"""
+        """
+            if book_recomendation:
+                response += f"<p>  Recomendación: <a href='/books/{book_recomendation}'>Libro {book_recomendation}</a></p>"
+
             self.wfile.write(response.encode("utf-8"))
         else:
             self.send_error(404, "Not Found")
