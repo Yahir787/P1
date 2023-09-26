@@ -23,6 +23,8 @@ class WebRequestHandler(BaseHTTPRequestHandler):
     def query_data(self):
         return dict(parse_qsl(self.url.query))
     
+
+    
     def do_GET(self):
         self.send_response(200)
         self.send_header("Content-Type", "text/html")

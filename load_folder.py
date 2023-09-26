@@ -31,5 +31,8 @@ def create_index(book_id, html):
     for t in lista_texto:
         r.sadd(t, book_id)
 
+    # Almacena la URL con el formato "books/{book_id}"
+    r.set(book_id, f"books/{book_id}")
+
 
 load_folder('html/books/')
