@@ -5,6 +5,7 @@ from urllib.parse import parse_qsl, urlparse
 import re
 import redis
 import uuid 
+from urllib import parse
 
 r = redis.Redis(host='localhost', port=6379, db=0)
 
@@ -92,6 +93,9 @@ class WebRequestHandler(BaseHTTPRequestHandler):
             match = re.match(pattern, path)
             if match:
                 return (method, match.groupdict())
+    
+
+
 
 
 mapping = [
